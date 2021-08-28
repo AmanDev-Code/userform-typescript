@@ -11,7 +11,7 @@ function App() {
   return (
     <StoreProvider store={store}>
       
-            <BrowserRouter>
+            <BrowserRouter basename="/userform-typescript/">
               <Switch>
                 <Route exact path="/" component={UserForm}></Route>
                 <Route exact path="/information/:userId" component={DynamicUserInfo} ></Route>
