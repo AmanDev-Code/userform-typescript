@@ -28,6 +28,7 @@ const users: UsersModel = {
     const userUpdateIndex = state.items.findIndex((user) => {
       return user.userId === payload.userId
     });
+    console.log(payload)
       if(userUpdateIndex !== undefined){
         state.items[userUpdateIndex].userName = payload.userName
         state.items[userUpdateIndex].userEmail = payload.userEmail
