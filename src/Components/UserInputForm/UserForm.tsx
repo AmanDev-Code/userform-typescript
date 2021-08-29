@@ -61,15 +61,15 @@ const UserForm: FC = () => {
                             <form onSubmit={onSubmits} autoComplete="off">
                                 <FormControl variant="filled" color='primary' style={{ display: 'block', marginBottom: '20px' }}>
                                     <InputLabel htmlFor="component-filled">Name</InputLabel>
-                                    <FilledInput id="component-filled" value={userInformation.userName} onChange={inputEventName} name="userName" required fullWidth autoComplete="off" />
+                                    <FilledInput type='text' id="component-filled" value={userInformation.userName} onChange={inputEventName} name="userName" required fullWidth autoComplete="off" />
                                 </FormControl>
                                 <FormControl variant="filled" color='primary' style={{ display: 'block', marginBottom: '20px' }}>
                                     <InputLabel htmlFor="component-outlined">Email</InputLabel>
-                                    <FilledInput id="component-outlined" value={userInformation.userEmail} onChange={inputEventName} name="userEmail" required fullWidth autoComplete="off" />
+                                    <FilledInput type='text' id="component-outlined" value={userInformation.userEmail} onChange={inputEventName} name="userEmail" required fullWidth autoComplete="off" />
                                 </FormControl>
                                 <FormControl variant="filled" color='primary' style={{ display: 'block', marginBottom: '20px' }}>
                                     <InputLabel htmlFor="component-outlined">Age</InputLabel>
-                                    <FilledInput id="component-outlined" value={userInformation.userAge} onChange={inputEventName} name="userAge" required fullWidth autoComplete="off" />
+                                    <FilledInput type='number' id="component-outlined" value={userInformation.userAge} onChange={inputEventName} name="userAge" required fullWidth autoComplete="off" />
                                 </FormControl>
                                 {toggleButton ? <Button type="submit" style={{
                                     fontSize: 16,
