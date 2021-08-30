@@ -11,7 +11,7 @@ const DynamicUserInfo: FC = () => {
     const setUserInfo = useStoreActions((store) => store.users.setUserInfo);
     setUserInfo(userId);
     return (
-        <>    {userdetails.userId !== "" ? <Grid container  >
+        <>    {userdetails.userId !== null ? <Grid container  >
             <Grid item md={12} xs={12} style={{ background: 'radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)' }}>
                 <Box display='flex' justifyContent='center' alignItems='center' minHeight='100vh' >
 

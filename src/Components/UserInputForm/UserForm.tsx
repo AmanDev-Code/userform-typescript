@@ -5,21 +5,16 @@ import { CloudCircleRounded } from '@material-ui/icons';
 import { useStoreActions, useStoreState } from '../../Easy-peasy/Store';
 import Idata from '../../Easy-peasy/Interfaces';
 
-
 const UserForm: FC = () => {
     const userdata = useStoreState((store) => store.users.items);
     const createUser = useStoreActions((store) => store.users.createUser);
-
     const updateUser = useStoreActions((store) => store.users.updateUser);
 
     const [userInformation, setInfo] = useState<Idata>({ userId: "", userName: '', userEmail: '', userAge: undefined });
-    const [toggleButton, setToggleButton] = useState(false);
-    const [iseditItems, setIsEditItem] = useState<String>();
-
-
+    
     const inputEventName = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
-        setInfo({ ...userInformation, [name]: value, userId: String(Number(Math.random().toString().slice(2, 11))) });
+        setInfo({ ...userInformation, [name]: value });
     };
 
     // edit the current data card
@@ -27,10 +22,8 @@ const UserForm: FC = () => {
 
         console.log(userinfo)
         if (userinfo.userId) {
-            setIsEditItem(userinfo.userId)
-            setToggleButton(true);
             setInfo({
-                userId: String(userinfo.userId), userName: userinfo.userName, userEmail: userinfo.userEmail, userAge: userinfo
+                userId: userinfo.userId, userName: userinfo.userName, userEmail: userinfo.userEmail, userAge: userinfo
                     .userAge
             });
             return userinfo.userId;
@@ -40,12 +33,11 @@ const UserForm: FC = () => {
 
     const onSubmits = (event: React.MouseEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if ((toggleButton)) {
-            updateUser({ userId: String(iseditItems), userName: userInformation.userName, userEmail: userInformation.userEmail, userAge: Number(userInformation.userAge) })
+        if ((userInformation.userId)) {
+            updateUser({ userId: String(userInformation.userId), userName: userInformation.userName, userEmail: userInformation.userEmail, userAge: Number(userInformation.userAge) })
             setInfo({ userId: "", userName: '', userEmail: '', userAge: 0 });
-            setToggleButton(false);
         } else {
-            createUser({ userId: userInformation.userId, userName: userInformation.userName, userEmail: userInformation.userEmail, userAge: Number(userInformation.userAge) });
+            createUser({ userId: String(Number(Math.random().toString().slice(2, 11))), userName: userInformation.userName, userEmail: userInformation.userEmail, userAge: Number(userInformation.userAge) });
             setInfo({ userId: "", userName: '', userEmail: '', userAge: 0 });
         }
     }
@@ -71,7 +63,7 @@ const UserForm: FC = () => {
                                     <InputLabel htmlFor="component-outlined">Age</InputLabel>
                                     <FilledInput type='number' id="component-outlined" value={userInformation.userAge} onChange={inputEventName} name="userAge" required fullWidth autoComplete="off" />
                                 </FormControl>
-                                {toggleButton ? <Button type="submit" style={{
+                                {userInformation.userId ? <Button type="submit" style={{
                                     fontSize: 16,
                                     color: '#C0392B',
                                     padding: '6px 12px',

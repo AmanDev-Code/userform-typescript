@@ -15,7 +15,7 @@ const users: UsersModel = {
     userId: '',
     userName: '',
     userEmail: '',
-    userAge: 0
+    userAge: undefined
 
   },
   createUser: action((state, payload) => {
@@ -29,21 +29,17 @@ const users: UsersModel = {
       return user.userId === payload.userId
     });
     console.log(payload)
-      if(userUpdateIndex !== undefined){
-        state.items[userUpdateIndex].userName = payload.userName
-        state.items[userUpdateIndex].userEmail = payload.userEmail
-        state.items[userUpdateIndex].userAge = payload.userAge
-      }
+    if (userUpdateIndex === -1 ) {
+      return undefined
+    }
+    state.items[userUpdateIndex] = payload
   }),
   setUserInfo: action((state, payload) => {
     const userDetailsOnFind = state.items.find(val => val.userId === payload.userId);
-    if(userDetailsOnFind?.userId === payload.userId)
-    {
-      state.userDetails.userId = userDetailsOnFind.userId
-      state.userDetails.userName = userDetailsOnFind.userName;
-      state.userDetails.userEmail = userDetailsOnFind.userEmail;
-      state.userDetails.userAge = userDetailsOnFind.userAge;
+    if (userDetailsOnFind?.userId !== payload.userId) {
+      return undefined
     }
+    state.userDetails = userDetailsOnFind
   }),
 };
 
