@@ -1,17 +1,23 @@
 
-import { Box,Icon, IconButton, Typography } from '@material-ui/core';
+import { Box,Icon, IconButton, makeStyles, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import Idata from '../../Easy-peasy/Interfaces';
+import UserDetails from '../../Easy-peasy/Interfaces';
 import { useStoreActions } from '../../Easy-peasy/Store';
 
-
 interface Props {
-    data: Idata;
-    editItems(uniqueid: Idata): void;
+    info: UserDetails;
+    editItems(uniqueid: UserDetails): void;
 
 }
 
-const UserDisplay = ({ data, editItems }: Props) => {
+const useStyles = makeStyles({
+    Box: {
+        background: 'rgb(85, 41, 220)'
+    }
+})
+
+const UserDisplay = ({ info, editItems }: Props) => {
+    const classes = useStyles();
 
     const removeUser = useStoreActions((store) => store.users.removeUser);
 
@@ -23,28 +29,24 @@ const UserDisplay = ({ data, editItems }: Props) => {
 
     return (
         <>
-    
-            <div key={Number(data.userId)}>
-                <Box p={2} borderRadius={10} mb={2} style={{ background: 'rgb(85, 41, 220)' }} key={Number(data.userId)}>
-                    <Typography variant='h6' style={{ display: 'flex' }}> Name : {data.userName}</Typography>
-                    <Typography variant='h6' style={{ display: 'flex' }}>  Email : {data.userEmail} </Typography>
-                    <Typography variant='h6' style={{ display: 'flex' }}>  Age : {data.userAge}</Typography>
-                    <IconButton size="medium" onClick={() => { editItems(data); }} aria-label="edit">
+            <div key={Number(info.userId)}>
+                <Box p={2} borderRadius={10} mb={2} className={classes.Box} key={Number(info.userId)}>
+                    <Typography variant='h6' style={{ display: 'flex' }}> Name  : {info.userName}</Typography>
+                    <Typography variant='h6' style={{ display: 'flex' }}> Email : {info.userEmail} </Typography>
+                    <Typography variant='h6' style={{ display: 'flex' }}> Age : {info.userAge}</Typography>
+                    <IconButton size="medium" onClick={() => { editItems(info); }} aria-label="edit">
                         <Icon fontSize='large' color='secondary' className="fas fa-pencil-alt"></Icon>
                     </IconButton>
-                    <IconButton size="medium" onClick={() => { deleteItem(Number(data.userId), data.userName); }} aria-label="edit">
+                    <IconButton size="medium" onClick={() => { deleteItem(Number(info.userId), info.userName); }} aria-label="edit">
                         <Icon fontSize='large' color='primary' className="fas fa-trash"></Icon>
                     </IconButton>
-                    <Link to={'/information/' + data.userId}>
+                    <Link to={'/information/' + info.userId}>
                     <IconButton size="medium" aria-label="edit">
                         <Icon fontSize='large' color='error' className="fas fa-arrow-circle-right"></Icon>
                     </IconButton>
                    </Link>
-
                 </Box>
             </div>
-
-
         </>
     )
 }

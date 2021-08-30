@@ -1,4 +1,3 @@
-
 import UserForm from './Components/UserInputForm/UserForm';
 import DynamicUserInfo from './Components/DynamicUserInfomation/DynamicUserInfo';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -18,14 +17,15 @@ const theme = createTheme({
     error: {
       main: '#cddc39'
     }
-  }
+  },
+  spacing: 15 ,
+
 })
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
     <StoreProvider store={store}>
-
       <BrowserRouter basename="/userform-typescript/">
         <Switch>
           <Route exact path="/" component={UserForm}></Route>

@@ -1,41 +1,44 @@
 import { action, Action } from 'easy-peasy'
-import Idata from './Interfaces'
+import UserDetails from './Interfaces'
+
 export interface UsersModel {
-  items: Idata[];
-  userDetails: Idata;
-  createUser: Action<UsersModel, Idata>;
-  setUserInfo: Action<UsersModel, Idata>;
+  users: UserDetails[];
+  userDetails: UserDetails;
+  createUser: Action<UsersModel, UserDetails>;
+  setUserInfo: Action<UsersModel, UserDetails>;
   removeUser: Action<UsersModel, number | string>;
-  updateUser: Action<UsersModel, Idata>;
+  updateUser: Action<UsersModel, UserDetails>;
 }
 
 const users: UsersModel = {
-  items: [],
+  users: [],
   userDetails: {
     userId: '',
     userName: '',
     userEmail: '',
     userAge: undefined
-
   },
+  
   createUser: action((state, payload) => {
-    state.items.push(payload);
+    state.users.push(payload);
   }),
+
   removeUser: action((state, payload) => {
-    state.items = state.items.filter((user) => user.userId !== payload);
+    state.users = state.users.filter((user) => user.userId !== payload);
   }),
+
   updateUser: action((state, payload) => {
-    const userUpdateIndex = state.items.findIndex((user) => {
+    const userUpdateIndex = state.users.findIndex((user) => {
       return user.userId === payload.userId
     });
-    console.log(payload)
     if (userUpdateIndex === -1 ) {
       return undefined
     }
-    state.items[userUpdateIndex] = payload
+    state.users[userUpdateIndex] = payload
   }),
+
   setUserInfo: action((state, payload) => {
-    const userDetailsOnFind = state.items.find(val => val.userId === payload.userId);
+    const userDetailsOnFind = state.users.find(val => val.userId === payload.userId);
     if (userDetailsOnFind?.userId !== payload.userId) {
       return undefined
     }
