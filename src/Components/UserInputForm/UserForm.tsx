@@ -1,9 +1,11 @@
-import React, { useState, FC, ChangeEvent } from 'react'
+import React, { useState, FC } from 'react'
 import UserDisplay from '../DisplayUserInfo/UserDisplay';
-import { Box, Button, FilledInput, FormControl, Grid, Icon, InputLabel, makeStyles } from '@material-ui/core';
+import { Box, Button, Grid, Icon, makeStyles } from '@material-ui/core';
 import { CloudCircleRounded } from '@material-ui/icons';
 import store, { useStoreActions, useStoreState } from '../../Easy-peasy/Store';
 import UserDetails from '../../Easy-peasy/Interfaces';
+import { ReactForm, IFormActionProps, IFieldProps, IProps, getFieldError } from 'react-forms';
+import { FormikHelpers } from 'formik';
 
 const useStyles = makeStyles({
     SubmitButton: {
@@ -65,18 +67,42 @@ const useStyles = makeStyles({
 
 const UserForm: FC = () => {
 
-    const classes = useStyles();
+    const styles = useStyles();
 
     const userdata = useStoreState((store) => store.users.users);
     const createUser = useStoreActions((store) => store.users.createUser);
     const updateUser = useStoreActions((store) => store.users.updateUser);
 
-    const [userInformation, setInfo] = useState<UserDetails>({ userId: "", userName: '', userEmail: '', userAge: undefined });
-
-    const inputEventName = (event: ChangeEvent<HTMLInputElement>): void => {
-        const { name, value } = event.target;
-        setInfo({ ...userInformation, [name]: value });
+    const [userInformation, setInfo] = useState<UserDetails>({ userId: "", userName: '', userEmail: '', userAge: '' });
+    const handleConfig: IFormActionProps = {
+        submitButtonText: (userInformation.userId === "") ? 'Submit' : 'Update',
+        submitButtonProps: {
+            className: (userInformation.userId === "") ? styles.SubmitButton : styles.UpdateButton,
+            variant: "contained",
+            color: "secondary",
+            size: 'large',
+            endIcon: (userInformation.userId === "") ? <Icon>send</Icon> : <CloudCircleRounded />
+        },
     };
+
+    const userConfig = [{
+        type: 'text',
+        valueKey: 'userName',
+        fieldProps: { variant: "filled", label: 'Name', className: styles.FormControl, color: 'primary', fullWidth: true, required: true },
+
+    },
+    {
+        type: 'text',
+        valueKey: 'userEmail',
+        fieldProps: { variant: "filled", label: 'Email', className: styles.FormControl, color: 'primary', fullWidth: true, required: true }
+    },
+    {
+        type: "text",
+        valueKey: 'userAge',
+        fieldProps: { variant: "filled", label: 'Age', className: styles.FormControl, color: 'primary', fullWidth: true, required: true }
+    },
+    ]
+
 
     // edit the current data card
     const editUser = (userinfo: UserDetails) => {
@@ -90,17 +116,17 @@ const UserForm: FC = () => {
         return null
     }
 
-    const onSubmits = (event: React.MouseEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const onSubmits = (values: UserDetails, onSubmitProps: FormikHelpers<UserDetails>) => {
         if ((userInformation.userId)) {
-            updateUser({ userId: String(userInformation.userId), userName: userInformation.userName, userEmail: userInformation.userEmail, userAge: Number(userInformation.userAge) })
+            updateUser({ userId: String(userInformation.userId), userName: values.userName, userEmail: values.userEmail, userAge: Number(values.userAge) })
             setInfo({ userId: "", userName: '', userEmail: '', userAge: 0 });
             store.persist.flush();
         } else {
-            createUser({ userId: String(Number(Math.random().toString().slice(2, 11))), userName: userInformation.userName, userEmail: userInformation.userEmail, userAge: Number(userInformation.userAge) });
+            createUser({ userId: String(Number(Math.random().toString().slice(2, 11))), userName: values.userName, userEmail: values.userEmail, userAge: Number(values.userAge) });
             setInfo({ userId: "", userName: '', userEmail: '', userAge: 0 });
             store.persist.flush();
         }
+        onSubmitProps.setSubmitting(false);
     }
 
     const clearAllUsers = async () => {
@@ -112,32 +138,23 @@ const UserForm: FC = () => {
     return (
         <>
             <Grid container  >
-                <Grid item md={8} xs={12} className={classes.GridForm}>
+                <Grid item md={8} xs={12} className={styles.GridForm}>
                     <Box display='flex' justifyContent='center' alignItems='center' minHeight='100vh' >
-                        <Box p={5} borderRadius={15} boxShadow={3} className={classes.BoxForm}>
-                            <form onSubmit={onSubmits} autoComplete="off">
-                                <FormControl variant="filled" color='primary' className={classes.FormControl}>
-                                    <InputLabel htmlFor="component-filled">Name</InputLabel>
-                                    <FilledInput type='text' id="component-filled" value={userInformation.userName} onChange={inputEventName} name="userName" required fullWidth autoComplete="off" />
-                                </FormControl>
-                                <FormControl variant="filled" color='primary' className={classes.FormControl}>
-                                    <InputLabel htmlFor="component-outlined">Email</InputLabel>
-                                    <FilledInput type='text' id="component-outlined" value={userInformation.userEmail} onChange={inputEventName} name="userEmail" required fullWidth autoComplete="off" />
-                                </FormControl>
-                                <FormControl variant="filled" color='primary' className={classes.FormControl}>
-                                    <InputLabel htmlFor="component-outlined">Age</InputLabel>
-                                    <FilledInput type='number' id="component-outlined" value={userInformation.userAge} onChange={inputEventName} name="userAge" required fullWidth autoComplete="off" />
-                                </FormControl>
-                                {userInformation.userId ? <Button type="submit" className={classes.UpdateButton} endIcon={<CloudCircleRounded />}> Update</Button>
-                                    : <Button type="submit" className={classes.SubmitButton} variant="contained" color="secondary" endIcon={<Icon>send</Icon>}>Submit</Button>}
-                            </form>
+                        <Box p={5} borderRadius={15} boxShadow={3} className={styles.BoxForm}>
+                            <ReactForm formId='userForm'
+                                actionConfig={handleConfig}
+                                initialValues={userInformation}
+                                config={userConfig}
+                                onSubmit={onSubmits}
+                                enableReinitialize
+                            />
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item md={4} xs={12} className={classes.GridDisplay}>
-                    
+                <Grid item md={4} xs={12} className={styles.GridDisplay}>
+
                     <Box p={2}>
-                    {userdata.length > 1 ? <Button  type="reset" className={classes.Reset} variant="contained" color="secondary" onClick={() => {clearAllUsers()}} endIcon={<i className="fas fa-broom"></i>}>Clear All</Button>: null}
+                        {userdata.length > 1 ? <Button type="reset" className={styles.Reset} variant="contained" color="secondary" onClick={() => { clearAllUsers() }} endIcon={<i className="fas fa-broom"></i>}>Clear All</Button> : null}
                         {userdata.map((data: any, key: number) => {
                             return (
                                 <>

@@ -20,7 +20,9 @@ const users: UsersModel = {
   },
   
   createUser: action((state, payload) => {
+    console.log(payload)
     state.users.push(payload);
+    console.log(payload)
   }),
 
   removeUser: action((state, payload) => {
