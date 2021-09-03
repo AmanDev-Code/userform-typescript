@@ -1,10 +1,11 @@
 import React, { useState, FC } from 'react'
+import * as YUP from 'yup'
 import UserDisplay from '../DisplayUserInfo/UserDisplay';
-import { Box, Button, Grid, Icon, makeStyles } from '@material-ui/core';
+import { Box, Button, Grid, Icon, makeStyles, Typography, useMediaQuery } from '@material-ui/core';
 import { CloudCircleRounded } from '@material-ui/icons';
 import store, { useStoreActions, useStoreState } from '../../Easy-peasy/Store';
 import UserDetails from '../../Easy-peasy/Interfaces';
-import { ReactForm, IFormActionProps, IFieldProps, IProps, getFieldError } from 'react-forms';
+import { ReactForm, IFormActionProps } from 'react-forms';
 import { FormikHelpers } from 'formik';
 
 const useStyles = makeStyles({
@@ -62,18 +63,33 @@ const useStyles = makeStyles({
             color: '#fff',
             boxShadow: 'none',
         },
+    },
+    FormHeading: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '10px'
     }
+    
 });
 
 const UserForm: FC = () => {
 
     const styles = useStyles();
-
+    const ResponsiveScreen = useMediaQuery('(min-width:500px)');
     const userdata = useStoreState((store) => store.users.users);
     const createUser = useStoreActions((store) => store.users.createUser);
     const updateUser = useStoreActions((store) => store.users.updateUser);
 
     const [userInformation, setInfo] = useState<UserDetails>({ userId: "", userName: '', userEmail: '', userAge: '' });
+
+    const formValidation = YUP.object({
+        userName: YUP.string().max(15, 'Must be 15 characters or less').required('Name is required!'),
+        userEmail: YUP.string().email('Email is invalid').required('Email is required!'),
+        userAge: YUP.number().max(99, 'must be 3 digit or less').required('Age is required!')
+    })
+
+
     const handleConfig: IFormActionProps = {
         submitButtonText: (userInformation.userId === "") ? 'Submit' : 'Update',
         submitButtonProps: {
@@ -88,18 +104,17 @@ const UserForm: FC = () => {
     const userConfig = [{
         type: 'text',
         valueKey: 'userName',
-        fieldProps: { variant: "filled", label: 'Name', className: styles.FormControl, color: 'primary', fullWidth: true, required: true },
-
+        fieldProps: { variant: "filled", label: 'Name', className: styles.FormControl, color: 'primary', fullWidth: true }
     },
     {
         type: 'text',
         valueKey: 'userEmail',
-        fieldProps: { variant: "filled", label: 'Email', className: styles.FormControl, color: 'primary', fullWidth: true, required: true }
+        fieldProps: { variant: "filled", label: 'Email', className: styles.FormControl, color: 'primary', fullWidth: true }
     },
     {
         type: "text",
         valueKey: 'userAge',
-        fieldProps: { variant: "filled", label: 'Age', className: styles.FormControl, color: 'primary', fullWidth: true, required: true }
+        fieldProps: { variant: "filled", label: 'Age', className: styles.FormControl, color: 'primary', fullWidth: true }
     },
     ]
 
@@ -139,14 +154,19 @@ const UserForm: FC = () => {
         <>
             <Grid container  >
                 <Grid item md={8} xs={12} className={styles.GridForm}>
-                    <Box display='flex' justifyContent='center' alignItems='center' minHeight='100vh' >
-                        <Box p={5} borderRadius={15} boxShadow={3} className={styles.BoxForm}>
+
+                    <Box display='flex' justifyContent='center' alignItems='center' minHeight={ResponsiveScreen ? '100vh' : '100vh'} >
+
+                        <Box p={2} borderRadius={15} boxShadow={3} className={styles.BoxForm}>
+                            <Typography variant='h6' className={styles.FormHeading}>{ResponsiveScreen ? `React Typescript User Form` : `User Form`}</Typography>
                             <ReactForm formId='userForm'
                                 actionConfig={handleConfig}
                                 initialValues={userInformation}
                                 config={userConfig}
                                 onSubmit={onSubmits}
+                                validationSchema={formValidation}
                                 enableReinitialize
+
                             />
                         </Box>
                     </Box>

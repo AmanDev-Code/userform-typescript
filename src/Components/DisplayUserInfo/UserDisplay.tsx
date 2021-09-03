@@ -12,7 +12,10 @@ interface Props {
 
 const useStyles = makeStyles({
     Box: {
-        background: 'rgb(85, 41, 220)'
+        background: '#6200ea'
+    },
+    userDetailsTransfer: {
+        color: '#64b5f6'
     }
 })
 
@@ -41,8 +44,8 @@ const UserDisplay = ({ info, editItems }: Props) => {
                         <Icon fontSize='large' color='primary' className="fas fa-trash"></Icon>
                     </IconButton>
                     <Link to={'/information/' + info.userId}>
-                    <IconButton size="medium" aria-label="edit">
-                        <Icon fontSize='large' color='error' className="fas fa-arrow-circle-right"></Icon>
+                    <IconButton size="medium" aria-label="edit" className={classes.userDetailsTransfer}>
+                        <Icon fontSize='large' className="fas fa-arrow-circle-right"></Icon>
                     </IconButton>
                    </Link>
                 </Box>

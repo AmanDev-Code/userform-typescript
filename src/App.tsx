@@ -15,7 +15,7 @@ const theme = createTheme({
       main: '#69f0ae'
     },
     error: {
-      main: '#cddc39'
+      main: '#ff1744'
     }
   },
   spacing: 15 ,
